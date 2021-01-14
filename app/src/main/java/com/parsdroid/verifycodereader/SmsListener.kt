@@ -27,7 +27,7 @@ class SmsListener : BroadcastReceiver() {
                         msgFrom = messages[i]?.originatingAddress
                         msgBody = messages[i]?.messageBody.orEmpty()
                     }
-                    Log.e("RHLog", msgBody)
+                    Log.d(TAG, msgBody)
                     val verifyCode = getVerifyCodeFromSmsText(msgBody)
                     copyToClipboard(context, "verifyCode", verifyCode)
                     Toast.makeText(context, verifyCode + "copied to clipboard", Toast.LENGTH_SHORT)
@@ -47,16 +47,16 @@ class SmsListener : BroadcastReceiver() {
             if (Character.isDigit(c)) {
                 builder.append(c)
             } else if (builder.isNotEmpty()) {
-                Log.e("RHLog", "digit: $builder")
+                Log.e(TAG, "digit: $builder")
                 digitList.add(builder.toString())
-                Log.e("RHLog", "digitList: $digitList")
+                Log.e(TAG, "digitList: $digitList")
                 builder.setLength(0)
             }
         }
         if (builder.isNotEmpty()) {
-            Log.e("RHLog", "digit: $builder")
+            Log.e(TAG, "digit: $builder")
             digitList.add(builder.toString())
-            Log.e("RHLog", "digitList: $digitList")
+            Log.e(TAG, "digitList: $digitList")
             builder.setLength(0)
         }
         return digitList[digitList.size - 1]
@@ -70,5 +70,6 @@ class SmsListener : BroadcastReceiver() {
 
     companion object {
         private const val PDUS = "pdus"
+        private val TAG = SmsListener::class.java.simpleName
     }
 }
