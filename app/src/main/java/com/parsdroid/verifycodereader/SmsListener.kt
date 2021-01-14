@@ -1,7 +1,6 @@
 package com.parsdroid.verifycodereader
 
 import android.content.*
-import android.os.Bundle
 import android.telephony.SmsMessage
 import android.util.Log
 import android.widget.Toast
@@ -13,28 +12,27 @@ class SmsListener : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
 
-        if (intent.action == "android.provider.Telephony.SMS_RECEIVED") {
-            val bundle: Bundle? = intent.extras
-            val messages: Array<SmsMessage?>?
-            var msgFrom: String?
-            if (bundle != null) {
-                try {
-                    val pdus = bundle[PDUS] as Array<Any>?
-                    messages = arrayOfNulls(pdus!!.size)
-                    var msgBody = ""
-                    messages.indices.forEach { i ->
-                        messages[i] = SmsMessage.createFromPdu(pdus[i] as ByteArray)
-                        msgFrom = messages[i]?.originatingAddress
-                        msgBody = messages[i]?.messageBody.orEmpty()
-                    }
-                    Log.d(TAG, msgBody)
-                    val verifyCode = getVerifyCodeFromSmsText(msgBody)
-                    copyToClipboard(context, "verifyCode", verifyCode)
-                    Toast.makeText(context, verifyCode + "copied to clipboard", Toast.LENGTH_SHORT)
-                        .show()
-                } catch (e: Exception) {
-//                            Log.d("Exception caught",e.getMessage());
+        if (intent.action != "android.provider.Telephony.SMS_RECEIVED") {
+            return
+        }
+
+        intent.extras?.let { bundle ->
+            try {
+                val pdus = bundle[PDUS] as Array<Any>?
+                var messageBody = ""
+                var msgFrom: String?
+                pdus?.forEach { pdu ->
+                    val message: SmsMessage? = SmsMessage.createFromPdu(pdu as ByteArray)
+                    msgFrom = message?.originatingAddress
+                    messageBody = message?.messageBody.orEmpty()
                 }
+                Log.d(TAG, messageBody)
+                val verifyCode = getVerifyCodeFromSmsText(messageBody)
+                copyToClipboard(context, "VerifyCode", verifyCode)
+                Toast.makeText(context, "$verifyCode copied to clipboard", Toast.LENGTH_LONG)
+                    .show()
+            } catch (e: Exception) {
+                Log.e(TAG, e.message.toString())
             }
         }
     }
