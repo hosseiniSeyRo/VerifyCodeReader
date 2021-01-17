@@ -49,6 +49,8 @@ dependencies {
     implementation "com.squareup.retrofit2:converter-moshi:$retrofit_version"
     implementation "com.squareup.retrofit2:converter-gson:$retrofit_version"
 
+    testImplementation 'org.robolectric:robolectric:4.4'
+
     // Gson
     implementation 'com.google.code.gson:gson:2.8.6'
 }
