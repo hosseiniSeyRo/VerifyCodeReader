@@ -4,11 +4,9 @@ import android.content.*
 import android.telephony.SmsMessage
 import android.util.Log
 import android.widget.Toast
-import java.util.*
+import androidx.core.text.isDigitsOnly
 
 class SmsListener : BroadcastReceiver() {
-
-    private val preferences: SharedPreferences? = null
 
     override fun onReceive(context: Context, intent: Intent) {
 
@@ -27,7 +25,9 @@ class SmsListener : BroadcastReceiver() {
                     messageBody = message?.messageBody.orEmpty()
                 }
                 Log.d(TAG, messageBody)
-                val verifyCode = getVerifyCodeFromSmsText(messageBody)
+
+                val verifyCode = getVerifyCodeFromSmsText(messageBody) ?: return
+
                 copyToClipboard(context, "VerifyCode", verifyCode)
                 Toast.makeText(context, "$verifyCode copied to clipboard", Toast.LENGTH_LONG)
                     .show()
@@ -35,29 +35,6 @@ class SmsListener : BroadcastReceiver() {
                 Log.e(TAG, e.message.toString())
             }
         }
-    }
-
-    private fun getVerifyCodeFromSmsText(smsText: String): String {
-        val digitList = ArrayList<String>()
-        val builder = StringBuilder()
-        for (element in smsText) {
-            val c = element
-            if (Character.isDigit(c)) {
-                builder.append(c)
-            } else if (builder.isNotEmpty()) {
-                Log.e(TAG, "digit: $builder")
-                digitList.add(builder.toString())
-                Log.e(TAG, "digitList: $digitList")
-                builder.setLength(0)
-            }
-        }
-        if (builder.isNotEmpty()) {
-            Log.e(TAG, "digit: $builder")
-            digitList.add(builder.toString())
-            Log.e(TAG, "digitList: $digitList")
-            builder.setLength(0)
-        }
-        return digitList[digitList.size - 1]
     }
 
     private fun copyToClipboard(context: Context, label: String, text: String) {
@@ -68,6 +45,27 @@ class SmsListener : BroadcastReceiver() {
 
     companion object {
         private const val PDUS = "pdus"
+        private val KEYWORDS = arrayOf("رمز", "کد", "password", "code")
         private val TAG = SmsListener::class.java.simpleName
+
+
+        fun getVerifyCodeFromSmsText(smsText: String): String? {
+            val words = smsText.trim().split("\\s+".toRegex())
+            val keywordIndex = findKeywordIndex(words)
+            if (keywordIndex == -1) return null
+
+            return words.drop(keywordIndex + 1).firstOrNull {
+                it.isDigitsOnly()
+            }
+        }
+
+        private fun findKeywordIndex(words: List<String>): Int {
+            return words.indexOfLast { word ->
+                KEYWORDS.any { keyword ->
+                    word.contains(keyword, ignoreCase = true)
+                }
+            }
+        }
+
     }
 }
