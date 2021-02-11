@@ -7,10 +7,7 @@ import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 
-
 class MainActivity : AppCompatActivity() {
-
-    private val MY_PERMISSIONS_REQUEST_SMS_RECEIVE = 10
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -22,7 +19,7 @@ class MainActivity : AppCompatActivity() {
         ActivityCompat.requestPermissions(
             this,
             arrayOf(Manifest.permission.RECEIVE_SMS),
-            MY_PERMISSIONS_REQUEST_SMS_RECEIVE
+            REQUEST_CODE_SMS_RECEIVE
         )
     }
 
@@ -31,19 +28,17 @@ class MainActivity : AppCompatActivity() {
         permissions: Array<String>,
         grantResults: IntArray
     ) {
-        when (requestCode) {
-            MY_PERMISSIONS_REQUEST_SMS_RECEIVE -> {
-                // If request is cancelled, the result arrays are empty.
-                if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                    Log.e("RHLog", "MY_PERMISSIONS_REQUEST_SMS_RECEIVE --> YES")
-                } else {
-                    Log.e("RHLog", "MY_PERMISSIONS_REQUEST_SMS_RECEIVE --> NO")
-                }
-                return
-            }
-            else -> {
-                // Ignore all other requests.
+        if (requestCode == REQUEST_CODE_SMS_RECEIVE) {
+            if ((grantResults.getOrNull(0) == PackageManager.PERMISSION_GRANTED)) {
+                Log.e("RHLog", "MY_PERMISSIONS_REQUEST_SMS_RECEIVE --> YES")
+            } else {
+                Log.e("RHLog", "MY_PERMISSIONS_REQUEST_SMS_RECEIVE --> NO")
             }
         }
+    }
+
+    companion object {
+
+        private const val REQUEST_CODE_SMS_RECEIVE = 10
     }
 }
