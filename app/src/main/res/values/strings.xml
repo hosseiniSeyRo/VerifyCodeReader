@@ -1,3 +1,4 @@
 <resources>
-    <string name="app_name">VerifyCodeReader</string>
+    <string name="app_name" translatable="false">VerifyCodeReader</string>
+    <string name="copied_to_clipboard">%s verifyCode copied to clipboard</string>
 </resources>

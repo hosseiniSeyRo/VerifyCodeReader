@@ -37,9 +37,8 @@ class SmsListener : BroadcastReceiver() {
                 } ?: return
 
                 copyToClipboard(context, "VerifyCode", verifyCode)
-                Toast
-                    .makeText(context, "$verifyCode copied to clipboard", Toast.LENGTH_LONG)
-                    .show()
+                val toastString = context.getString(R.string.copied_to_clipboard, verifyCode)
+                Toast.makeText(context, toastString, Toast.LENGTH_LONG).show()
             } catch (e: Exception) {
                 Log.e(TAG, e.message.toString())
             }
