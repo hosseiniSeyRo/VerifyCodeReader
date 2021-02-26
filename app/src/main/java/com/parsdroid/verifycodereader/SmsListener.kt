@@ -36,7 +36,7 @@ class SmsListener : BroadcastReceiver() {
                     tempVerifyCode
                 } ?: return
 
-                copyToClipboard(context, "VerifyCode", verifyCode)
+                context.copyToClipboard(verifyCode)
                 val toastString = context.getString(R.string.copied_to_clipboard, verifyCode)
                 Toast.makeText(context, toastString, Toast.LENGTH_LONG).show()
             } catch (e: Exception) {
