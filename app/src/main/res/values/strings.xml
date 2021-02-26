@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name" translatable="false">VerifyCodeReader</string>
     <string name="copied_to_clipboard">%s verifyCode copied to clipboard</string>
+    <string name="no_permission">Without SMS permission this application can not do anything for you!</string>
+    <string name="no_code">No code received</string>
+    <string name="give_permission">Give permission</string>
 </resources>
