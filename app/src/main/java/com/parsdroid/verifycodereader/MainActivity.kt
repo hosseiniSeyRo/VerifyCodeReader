@@ -1,44 +1,76 @@
 package com.parsdroid.verifycodereader
 
-import android.Manifest
-import android.content.pm.PackageManager
+import android.Manifest.permission.RECEIVE_SMS
 import android.os.Bundle
-import android.util.Log
+import androidx.activity.result.contract.ActivityResultContracts.RequestPermission
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
+import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
+import androidx.core.view.isVisible
+import com.parsdroid.verifycodereader.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
 
+    private var binding: ActivityMainBinding? = null
+
+    private var buttonNoPermissionClicked = false
+    private var neverAskAgainChecked = false
+    private val requestPermissionLauncher = registerForActivityResult(
+        RequestPermission()
+    ) { isGranted: Boolean ->
+        binding?.groupNoPermission?.isVisible = !isGranted
+        if (!isGranted) {
+            binding?.groupNoPermission?.isVisible = true
+            if (neverAskAgainChecked &&
+                !shouldShowRequestPermissionRationale(this, RECEIVE_SMS) &&
+                buttonNoPermissionClicked
+            ) {
+                buttonNoPermissionClicked = false
+                openAppInfo()
+            }
+            neverAskAgainChecked = !shouldShowRequestPermissionRationale(this, RECEIVE_SMS)
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        initUI()
     }
 
     override fun onStart() {
         super.onStart()
-        ActivityCompat.requestPermissions(
-            this,
-            arrayOf(Manifest.permission.RECEIVE_SMS),
-            REQUEST_CODE_SMS_RECEIVE
-        )
+        requestSmsPermission()
     }
 
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<String>,
-        grantResults: IntArray
-    ) {
-        if (requestCode == REQUEST_CODE_SMS_RECEIVE) {
-            if ((grantResults.getOrNull(0) == PackageManager.PERMISSION_GRANTED)) {
-                Log.e("RHLog", "MY_PERMISSIONS_REQUEST_SMS_RECEIVE --> YES")
-            } else {
-                Log.e("RHLog", "MY_PERMISSIONS_REQUEST_SMS_RECEIVE --> NO")
-            }
+    override fun onDestroy() {
+        super.onDestroy()
+        binding?.removeClickListeners()
+        binding = null
+        requestPermissionLauncher.unregister()
+    }
+
+    private fun initUI() {
+        binding = ActivityMainBinding.inflate(layoutInflater).apply {
+            setContentView(root)
+            setClickListeners()
         }
     }
 
-    companion object {
+    private fun requestSmsPermission() {
+        requestPermissionLauncher.launch(RECEIVE_SMS)
+    }
 
-        private const val REQUEST_CODE_SMS_RECEIVE = 10
+    private fun ActivityMainBinding.setClickListeners() {
+        textCode.setOnClickListener {
+            copyToClipboard(textCode.text)
+        }
+        buttonNoPermission.setOnClickListener {
+            buttonNoPermissionClicked = true
+            requestSmsPermission()
+        }
+    }
+
+    private fun ActivityMainBinding.removeClickListeners() {
+        buttonNoPermission.setOnClickListener(null)
+        textCode.setOnClickListener(null)
     }
 }
