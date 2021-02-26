@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="CodeTextViewStyle" parent="Widget.MaterialComponents.TextView">
+        <item name="android:background">@drawable/bg_code_text</item>
+        <item name="android:padding">@dimen/spacing_normal</item>
+        <item name="android:textAppearance">?android:attr/textAppearanceLarge</item>
+    </style>
+</resources>
