@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="app_name">کد خوان</string>
     <string name="copied_to_clipboard">%s کد کپی شد.</string>
     <string name="no_permission">بدون مجوزِ «خواندن پیامک» این برنامه نمیتواند کاری انجام دهد!</string>
     <string name="no_code">کدی دریافت نشده</string>
