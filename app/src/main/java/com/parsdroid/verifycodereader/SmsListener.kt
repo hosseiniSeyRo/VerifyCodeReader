@@ -1,19 +1,23 @@
 package com.parsdroid.verifycodereader
 
-import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.provider.Telephony.Sms.Intents.SMS_RECEIVED_ACTION
 import android.telephony.SmsMessage
 import android.util.Log
-import android.widget.Toast
 import androidx.core.text.isDigitsOnly
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
-class SmsListener : BroadcastReceiver() {
+@AndroidEntryPoint
+class SmsListener : HiltBroadcastReceiver() {
+
+    @Inject
+    lateinit var sharedPreferenceDataSource: SharedPreferenceDataSource
 
     override fun onReceive(context: Context, intent: Intent) {
-
+        super.onReceive(context, intent)
         if (intent.action != SMS_RECEIVED_ACTION) {
             return
         }
@@ -36,9 +40,8 @@ class SmsListener : BroadcastReceiver() {
                     tempVerifyCode
                 } ?: return
 
-                context.copyToClipboard(verifyCode)
-                val toastString = context.getString(R.string.copied_to_clipboard, verifyCode)
-                Toast.makeText(context, toastString, Toast.LENGTH_LONG).show()
+                copyAndToast(context, verifyCode)
+                sharedPreferenceDataSource.verifyCode = verifyCode
             } catch (e: Exception) {
                 Log.e(TAG, e.message.toString())
             }

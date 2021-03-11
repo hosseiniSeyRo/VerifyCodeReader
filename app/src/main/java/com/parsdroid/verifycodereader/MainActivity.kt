@@ -72,7 +72,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun ActivityMainBinding.setClickListeners() {
         textCode.setOnClickListener {
-            copyToClipboard(textCode.text)
+            copyAndToast(this@MainActivity, textCode.text)
         }
         buttonNoPermission.setOnClickListener {
             buttonNoPermissionClicked = true
