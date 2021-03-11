@@ -6,10 +6,16 @@ import androidx.activity.result.contract.ActivityResultContracts.RequestPermissi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
 import androidx.core.view.isVisible
+import com.chibatching.kotpref.livedata.asLiveData
 import com.parsdroid.verifycodereader.databinding.ActivityMainBinding
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
+    @Inject
+    lateinit var sharedPreferenceDataSource: SharedPreferenceDataSource
     private var binding: ActivityMainBinding? = null
 
     private var buttonNoPermissionClicked = false
@@ -51,6 +57,11 @@ class MainActivity : AppCompatActivity() {
     private fun initUI() {
         binding = ActivityMainBinding.inflate(layoutInflater).apply {
             setContentView(root)
+            sharedPreferenceDataSource.asLiveData(
+                sharedPreferenceDataSource::verifyCode
+            ).observe(this@MainActivity, {
+                textCode.text = it ?: getString(R.string.no_code)
+            })
             setClickListeners()
         }
     }
