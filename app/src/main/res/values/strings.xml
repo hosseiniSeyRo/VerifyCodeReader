@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Verification code reader</string>
     <string name="copied_to_clipboard">%s Verification code copied to clipboard</string>

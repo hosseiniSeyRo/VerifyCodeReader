@@ -3,4 +3,6 @@
     <color name="code_text_bg">@color/gray_400</color>
 
     <color name="gray_400">#bdbdbd</color>
+
+    <color name="ic_launcher_background">#C6C6C6</color>
 </resources>
