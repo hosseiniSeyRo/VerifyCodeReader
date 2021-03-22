@@ -7,6 +7,8 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.provider.Settings
+import android.view.View
+import androidx.lifecycle.AndroidViewModel
 
 fun Context.copyToClipboard(text: CharSequence, label: String = "Verification code") {
     val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
@@ -19,3 +21,12 @@ fun Activity.openAppInfo() {
         .setData(Uri.fromParts("package", packageName, null))
     startActivity(intent)
 }
+
+fun View.setOnClickListener(clickListener: () -> Unit) {
+    setOnClickListener {
+        clickListener()
+    }
+}
+
+val AndroidViewModel.application
+    get() = getApplication<VerifyCodeReaderApplication>()

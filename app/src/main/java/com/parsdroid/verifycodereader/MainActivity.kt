@@ -6,7 +6,6 @@ import androidx.activity.result.contract.ActivityResultContracts.RequestPermissi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
 import androidx.core.view.isVisible
-import com.chibatching.kotpref.livedata.asLiveData
 import com.parsdroid.verifycodereader.databinding.ActivityMainBinding
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -15,17 +14,20 @@ import javax.inject.Inject
 class MainActivity : AppCompatActivity() {
 
     @Inject
-    lateinit var sharedPreferenceDataSource: SharedPreferenceDataSource
-    private var binding: ActivityMainBinding? = null
+    lateinit var mainViewModel: MainViewModel
+
+    private var _binding: ActivityMainBinding? = null
+    private val binding: ActivityMainBinding
+        get() = _binding!!
 
     private var buttonNoPermissionClicked = false
     private var neverAskAgainChecked = false
     private val requestPermissionLauncher = registerForActivityResult(
         RequestPermission()
     ) { isGranted: Boolean ->
-        binding?.groupNoPermission?.isVisible = !isGranted
+        binding.groupNoPermission.isVisible = !isGranted
         if (!isGranted) {
-            binding?.groupNoPermission?.isVisible = true
+            binding.groupNoPermission.isVisible = true
             if (neverAskAgainChecked &&
                 !shouldShowRequestPermissionRationale(this, RECEIVE_SMS) &&
                 buttonNoPermissionClicked
@@ -40,6 +42,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         initUI()
+        observeViewModel()
     }
 
     override fun onStart() {
@@ -49,20 +52,21 @@ class MainActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        binding?.removeClickListeners()
-        binding = null
+        binding.removeClickListeners()
+        _binding = null
         requestPermissionLauncher.unregister()
     }
 
     private fun initUI() {
-        binding = ActivityMainBinding.inflate(layoutInflater).apply {
+        _binding = ActivityMainBinding.inflate(layoutInflater).apply {
             setContentView(root)
-            sharedPreferenceDataSource.asLiveData(
-                sharedPreferenceDataSource::verifyCode
-            ).observe(this@MainActivity, {
-                textCode.text = it ?: getString(R.string.no_code)
-            })
             setClickListeners()
+        }
+    }
+
+    private fun observeViewModel() {
+        mainViewModel.verificationCode.observe(this@MainActivity) {
+            binding.textCode.text = it
         }
     }
 
@@ -71,9 +75,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun ActivityMainBinding.setClickListeners() {
-        textCode.setOnClickListener {
-            copyAndToast(this@MainActivity, textCode.text)
-        }
+        textCode.setOnClickListener(mainViewModel::onCodeClicked)
         buttonNoPermission.setOnClickListener {
             buttonNoPermissionClicked = true
             requestSmsPermission()
