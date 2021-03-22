@@ -5,12 +5,13 @@
     <uses-permission android:name="android.permission.RECEIVE_SMS" />
 
     <application
-        android:fullBackupContent="@xml/backup_descriptor"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:name=".VerifyCodeReaderApplication"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
+        android:fullBackupContent="@xml/backup_descriptor"
+        android:allowBackup="true"
         android:theme="@style/Theme.VerifyCodeReader">
         <activity android:name=".MainActivity">
             <intent-filter>
@@ -19,7 +20,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <receiver android:name=".SmsListener">
+        <receiver
+            android:name=".SmsListener"
+            android:permission="android.permission.BROADCAST_SMS">
             <intent-filter>
                 <action android:name="android.provider.Telephony.SMS_RECEIVED" />
             </intent-filter>

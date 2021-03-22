@@ -1,7 +1,9 @@
 <component name="ProjectDictionaryState">
   <dictionary name="VerifyCodeReader">
     <words>
-      <w>pdus</w>
+        <w>pdus</w>
+        <w>sharedpref</w>
+        <w>verifycodereader</w>
     </words>
   </dictionary>
 </component>

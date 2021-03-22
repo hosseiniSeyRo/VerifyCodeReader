@@ -1,3 +1,5 @@
+@file:Suppress("unused", "unused")
+
 package com.parsdroid.verifycodereader
 
 import retrofit2.Call
