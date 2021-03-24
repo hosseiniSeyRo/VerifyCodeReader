@@ -34,7 +34,7 @@ class SmsListener : HiltBroadcastReceiver() {
                     val msgFrom = smsMessage?.originatingAddress
                     val messageBody = smsMessage?.messageBody.orEmpty()
                     Log.d(TAG, "$msgFrom: $messageBody")
-                    tempVerifyCode = getVerifyCodeFromSmsText(messageBody)
+                    tempVerifyCode = getVerificationCodeFromSmsText(messageBody)
                     tempVerifyCode != null
                 }?.let {
                     tempVerifyCode
@@ -51,8 +51,9 @@ class SmsListener : HiltBroadcastReceiver() {
     companion object {
 
         private const val PDU_TYPE = "pdus"
-        private val KEYWORDS = arrayOf("رمز", "کد", "password", "code")
+        private val KEYWORDS = listOf("رمز", "کد", "password", "code")
         private val TAG = SmsListener::class.java.simpleName
+        private const val COLON = ':'
 
         private val smsMessageFunction: (ByteArray?, String?) -> SmsMessage? =
             if (isApiLevelAndUp(Build.VERSION_CODES.M)) {
@@ -64,23 +65,29 @@ class SmsListener : HiltBroadcastReceiver() {
                 }
             }
 
-        fun getVerifyCodeFromSmsText(smsText: String): String? {
-            val words = smsText.trim().split("\\s+".toRegex())
-            val keywordIndex = findKeywordIndex(words)
+        fun getVerificationCodeFromSmsText(smsText: String): String? {
+            val text = smsText.trim()
+            val keywordIndex = findKeywordIndex(text)
             if (keywordIndex == -1) return null
 
-            return words.drop(keywordIndex + 1).firstOrNull {
-                it.isDigitsOnly()
-            }
-        }
-
-        private fun findKeywordIndex(words: List<String>): Int {
-            return words.indexOfLast { word ->
-                KEYWORDS.any { keyword ->
-                    word.contains(keyword, ignoreCase = true)
+            text.drop(keywordIndex + 1)
+                .split("\\s+".toRegex())
+                .forEach { word ->
+                    if (word.isDigitsOnly()) {
+                        return word
+                    }
+                    val colonIndex = word.indexOf(COLON)
+                    if (colonIndex != -1 &&
+                        word.substring(colonIndex).contains("\\d".toRegex())
+                    ) {
+                        return word.substring(colonIndex + 1)
+                    }
                 }
-            }
+            return null
         }
 
+        private fun findKeywordIndex(text: String): Int {
+            return text.indexOfAny(KEYWORDS, ignoreCase = true)
+        }
     }
 }
