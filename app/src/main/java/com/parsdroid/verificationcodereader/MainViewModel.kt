@@ -1,4 +1,4 @@
-package com.parsdroid.verifycodereader
+package com.parsdroid.verificationcodereader
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel

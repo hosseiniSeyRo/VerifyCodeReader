@@ -1,4 +1,4 @@
-package com.parsdroid.verifycodereader
+package com.parsdroid.verificationcodereader
 
 import android.Manifest.permission.RECEIVE_SMS
 import android.os.Bundle
@@ -6,7 +6,7 @@ import androidx.activity.result.contract.ActivityResultContracts.RequestPermissi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
 import androidx.core.view.isVisible
-import com.parsdroid.verifycodereader.databinding.ActivityMainBinding
+import com.parsdroid.verificationcodereader.databinding.ActivityMainBinding
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 

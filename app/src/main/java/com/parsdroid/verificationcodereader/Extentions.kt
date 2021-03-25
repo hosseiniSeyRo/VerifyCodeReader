@@ -1,4 +1,4 @@
-package com.parsdroid.verifycodereader
+package com.parsdroid.verificationcodereader
 
 import android.app.Activity
 import android.content.ClipData
@@ -29,4 +29,4 @@ fun View.setOnClickListener(clickListener: () -> Unit) {
 }
 
 val AndroidViewModel.application
-    get() = getApplication<VerifyCodeReaderApplication>()
+    get() = getApplication<VerificationCodeReaderApplication>()

@@ -1,6 +1,6 @@
-package com.parsdroid.verifycodereader
+package com.parsdroid.verificationcodereader
 
-import com.parsdroid.verifycodereader.SmsListener.Companion.getVerificationCodeFromSmsText
+import com.parsdroid.verificationcodereader.SmsListener.Companion.getVerificationCodeFromSmsText
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Test
@@ -10,7 +10,7 @@ import org.robolectric.annotation.Config
 
 @RunWith(RobolectricTestRunner::class)
 @Config(manifest = Config.NONE)
-class VerifyCodeTest {
+class VerificationCodeTest {
 
     @Test
     fun `returns null when is empty`() {

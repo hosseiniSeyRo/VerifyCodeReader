@@ -1,4 +1,4 @@
-package com.parsdroid.verifycodereader
+package com.parsdroid.verificationcodereader
 
 import android.content.Context
 import android.content.Intent

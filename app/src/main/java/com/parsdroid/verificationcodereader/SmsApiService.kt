@@ -1,6 +1,6 @@
 @file:Suppress("unused", "unused")
 
-package com.parsdroid.verifycodereader
+package com.parsdroid.verificationcodereader
 
 import retrofit2.Call
 import retrofit2.http.Field

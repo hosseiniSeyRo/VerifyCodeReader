@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest
     xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.parsdroid.verifycodereader">
+    package="com.parsdroid.verificationcodereader">
 
     <uses-permission android:name="android.permission.RECEIVE_SMS" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -10,12 +10,12 @@
     <application
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:name=".VerifyCodeReaderApplication"
+        android:name=".VerificationCodeReaderApplication"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:fullBackupContent="@xml/backup_descriptor"
         android:allowBackup="true"
-        android:theme="@style/Theme.VerifyCodeReader">
+        android:theme="@style/Theme.VerificationCodeReader">
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
