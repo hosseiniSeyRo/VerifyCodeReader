@@ -27,7 +27,6 @@ class MainActivity : AppCompatActivity() {
     ) { isGranted: Boolean ->
         binding.groupNoPermission.isVisible = !isGranted
         if (!isGranted) {
-            binding.groupNoPermission.isVisible = true
             if (neverAskAgainChecked &&
                 !shouldShowRequestPermissionRationale(this, RECEIVE_SMS) &&
                 buttonNoPermissionClicked

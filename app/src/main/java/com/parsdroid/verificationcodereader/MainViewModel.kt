@@ -3,7 +3,7 @@ package com.parsdroid.verificationcodereader
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.Transformations
+import androidx.lifecycle.MediatorLiveData
 import com.chibatching.kotpref.livedata.asLiveData
 import javax.inject.Inject
 

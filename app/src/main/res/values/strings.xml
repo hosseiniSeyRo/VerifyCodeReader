@@ -3,6 +3,8 @@
     <string name="app_name">Verification code reader</string>
     <string name="copied_to_clipboard">%s Verification code copied to clipboard</string>
     <string name="no_permission">Without SMS permission this application can not do anything for you!</string>
+    <string name="app_use_case">This application will recognize SMS messages with verification code and then copy the code for you to paste into other applications and websites.</string>
     <string name="no_code">No code received</string>
     <string name="give_permission">Give permission</string>
+    <string name="last_code">Your last code</string>
 </resources>
