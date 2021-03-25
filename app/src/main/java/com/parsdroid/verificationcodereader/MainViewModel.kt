@@ -12,12 +12,11 @@ class MainViewModel @Inject constructor(
     application: Application
 ) : AndroidViewModel(application) {
 
-    val verificationCode: LiveData<String> = Transformations.map(
-        sharedPreferenceDataSource.asLiveData(
-            sharedPreferenceDataSource::verifyCode
-        )
-    ) {
-        it ?: application.getString(R.string.no_code)
+    val verificationCode: LiveData<String> = MediatorLiveData<String>().apply {
+        addSource(sharedPreferenceDataSource.asLiveData(sharedPreferenceDataSource::verifyCode)) {
+            if (it != null) value = it
+        }
+        value = application.getString(R.string.no_code)
     }
 
     fun onCodeClicked() {
