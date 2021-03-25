@@ -2,5 +2,5 @@
 <full-backup-content>
     <include
         domain="sharedpref"
-        path="SharedPreferenceDataSource.xml" />
+        path="SharedPreferences.xml" />
 </full-backup-content>

@@ -11,5 +11,7 @@ class SharedPreferenceDataSource @Inject constructor(
     @ApplicationContext context: Context
 ) : KotprefModel(context) {
 
+    override val kotprefName: String = "SharedPreferences"
+
     var verifyCode by nullableStringPref()
 }
