@@ -2,8 +2,8 @@
 <resources>
     <string name="app_name">کد خوان</string>
     <string name="copied_to_clipboard">%s کد کپی شد.</string>
-    <string name="no_permission">بدون مجوزِ «خواندن پیامک» این برنامه نمیتواند کاری انجام دهد!</string>
-    <string name="app_use_case">این برنامه پیامک های حاوی کد را تشخیص داده و کد را برای شما کُپی میکند، تا در صورت نیاز آنرا در برنامه ها یا سایت ها جایگذاری کنید.</string>
+    <string name="no_permission">بدون مجوزِ «خواندن پیامک» این برنامه نمی‌تواند کاری انجام دهد!</string>
+    <string name="app_use_case">این برنامه پیامک‌های حاوی رمز(شامل رمز پویا و یکبار مصرف) را تشخیص داده و رمز را برای شما کُپی می‌کند، تا در صورت نیاز آنرا در برنامه‌ یا سایت مورد نظر جایگذاری کنید.</string>
     <string name="no_code">کدی دریافت نشده</string>
     <string name="give_permission">دادن مجوز</string>
     <string name="last_code">آخرین کد شما</string>
