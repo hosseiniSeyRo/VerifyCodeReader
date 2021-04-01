@@ -1,6 +1,6 @@
 package com.parsdroid.verificationcodereader
 
-import com.parsdroid.verificationcodereader.SmsListener.Companion.getVerificationCodeFromSmsText
+import com.parsdroid.verificationcodereader.SmsListener.Companion.findVerificationCodeInText
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Test
@@ -14,69 +14,69 @@ class VerificationCodeTest {
 
     @Test
     fun `returns null when is empty`() {
-        val verifyCode = getVerificationCodeFromSmsText("")
+        val verifyCode = findVerificationCodeInText("")
         assertNull(verifyCode)
     }
 
     @Test
     fun `returns null when is whitespace`() {
-        val verifyCode = getVerificationCodeFromSmsText(" ")
+        val verifyCode = findVerificationCodeInText(" ")
         assertNull(verifyCode)
     }
 
     @Test
     fun `returns null when is two whitespace`() {
-        val verifyCode = getVerificationCodeFromSmsText("  ")
+        val verifyCode = findVerificationCodeInText("  ")
         assertNull(verifyCode)
     }
 
     @Test
     fun `returns null when is new line`() {
-        val verifyCode = getVerificationCodeFromSmsText("\n")
+        val verifyCode = findVerificationCodeInText("\n")
         assertNull(verifyCode)
     }
 
     @Test
     fun `returns null when there is no keyword and code`() {
-        val verifyCode = getVerificationCodeFromSmsText("asd asd asd as dsa")
+        val verifyCode = findVerificationCodeInText("asd asd asd as dsa")
         assertNull(verifyCode)
     }
 
     @Test
     fun `returns null when there is code but no keyword`() {
-        val verifyCode = getVerificationCodeFromSmsText("asd asd 4534 asd as dsa")
+        val verifyCode = findVerificationCodeInText("asd asd 4534 asd as dsa")
         assertNull(verifyCode)
     }
 
     @Test
     fun `returns null when there is keyword but no code`() {
-        val verifyCode = getVerificationCodeFromSmsText("asd code asd asd as dsa")
+        val verifyCode = findVerificationCodeInText("asd code asd asd as dsa")
         assertNull(verifyCode)
     }
 
     @Test
     fun `returns null when code is before keyword`() {
-        val verifyCode = getVerificationCodeFromSmsText("asd 45456 code asd asd as dsa")
+        val verifyCode = findVerificationCodeInText("asd 45456 code asd asd as dsa")
         assertNull(verifyCode)
     }
 
     @Test
     fun `returns null when there is no code after keyword with colon`() {
-        val verifyCode = getVerificationCodeFromSmsText("asd code: asd asd as dsa")
+        val verifyCode = findVerificationCodeInText("asd code: asd asd as dsa")
         assertNull(verifyCode)
     }
 
     @Test
     fun `returns code when there is code after keyword`() {
         val inputCode = "45456"
-        val verifyCode = getVerificationCodeFromSmsText("asd رمز $inputCode asd asd as dsa")
+        val verifyCode = findVerificationCodeInText("asd رمز $inputCode asd asd as dsa")
         assertEquals(inputCode, verifyCode)
     }
 
     @Test
     fun `returns code when there is code after word contains keyword`() {
         val inputCode = "45456"
-        val verifyCode = getVerificationCodeFromSmsText("asd کد تایید: $inputCode asd asd as dsa")
+        val verifyCode = findVerificationCodeInText("asd کد تایید: $inputCode asd asd as dsa")
         assertEquals(inputCode, verifyCode)
     }
 
@@ -84,7 +84,7 @@ class VerificationCodeTest {
     fun `returns code after keyword when there is code after and before keyword`() {
         val firstCode = "12345"
         val secondCode = "56789"
-        val verifyCode = getVerificationCodeFromSmsText("$firstCode asd کد تایید: $secondCode asd asd as dsa")
+        val verifyCode = findVerificationCodeInText("$firstCode asd کد تایید: $secondCode asd asd as dsa")
         assertEquals(secondCode, verifyCode)
     }
 
@@ -92,14 +92,26 @@ class VerificationCodeTest {
     fun `returns first code when there is two code after keyword`() {
         val firstCode = "12345"
         val secondCode = "56789"
-        val verifyCode = getVerificationCodeFromSmsText("asd کد تایید: $firstCode asd asd $secondCode dsa")
+        val verifyCode = findVerificationCodeInText("asd کد تایید: $firstCode asd asd $secondCode dsa")
         assertEquals(firstCode, verifyCode)
     }
 
     @Test
     fun `returns code when there is no space before code`() {
         val inputCode = "45456"
-        val verifyCode = getVerificationCodeFromSmsText("asd کد تایید:$inputCode asd asd as dsa")
+        val verifyCode = findVerificationCodeInText("asd کد تایید:$inputCode asd asd as dsa")
         assertEquals(inputCode, verifyCode)
+    }
+
+    @Test
+    fun `returns code when is actual sms text`() {
+        val verifyCode = findVerificationCodeInText(
+            "*پارسیان بانک ایرانیان*\n" +
+                    " انتقال به\n" +
+                    "622106*7802\n" +
+                    "مبلغ  10,000\n" +
+                    "رمز  455443"
+        )
+        assertEquals("455443", verifyCode)
     }
 }

@@ -3,11 +3,12 @@ package com.parsdroid.verificationcodereader
 import android.content.Context
 import android.content.Intent
 import android.os.Build
+import android.os.Bundle
 import android.provider.Telephony.Sms.Intents.SMS_RECEIVED_ACTION
 import android.telephony.SmsMessage
-import android.util.Log
 import androidx.core.text.isDigitsOnly
 import dagger.hilt.android.AndroidEntryPoint
+import io.sentry.Sentry
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -21,39 +22,33 @@ class SmsListener : HiltBroadcastReceiver() {
         if (intent.action != SMS_RECEIVED_ACTION) {
             return
         }
-
-        intent.extras?.let { bundle ->
-            try {
-                @Suppress("UNCHECKED_CAST")
-                val pdus = bundle[PDU_TYPE] as? Array<ByteArray?> ?: return
-                val format = bundle.getString("format")
-
-                var tempVerifyCode: String? = null
-                val verifyCode = pdus.lastOrNull {
-                    val smsMessage = smsMessageFunction(it, format)
-                    val msgFrom = smsMessage?.originatingAddress
-                    val messageBody = smsMessage?.messageBody.orEmpty()
-                    Log.d(TAG, "$msgFrom: $messageBody")
-                    tempVerifyCode = getVerificationCodeFromSmsText(messageBody)
-                    tempVerifyCode != null
-                }?.let {
-                    tempVerifyCode
-                } ?: return
-
-                copyAndToast(context, verifyCode)
-                sharedPreferenceDataSource.verifyCode = verifyCode
-            } catch (e: Exception) {
-                Log.e(TAG, e.message.toString())
-            }
+        val verificationCode = try {
+            intent.extras?.parseSmsAndFindVerificationCode() ?: return
+        } catch (e: Exception) {
+            Sentry.captureException(e)
+            return
         }
+        copyAndToast(context, verificationCode)
+        sharedPreferenceDataSource.verifyCode = verificationCode
     }
 
     companion object {
 
         private const val PDU_TYPE = "pdus"
         private val KEYWORDS = listOf("رمز", "کد", "password", "code")
-        private val TAG = SmsListener::class.java.simpleName
         private const val COLON = ':'
+
+        @OptIn(ExperimentalStdlibApi::class)
+        private fun Bundle.parseSmsAndFindVerificationCode(): String? {
+            @Suppress("UNCHECKED_CAST")
+            val pdus = get(PDU_TYPE) as? Array<ByteArray?> ?: return null
+            val format = getString("format")
+
+            val smsText: String = pdus.mapNotNull {
+                smsMessageFunction(it, format)
+            }.joinToString(separator = "") { it.messageBody.orEmpty() }
+            return findVerificationCodeInText(smsText)
+        }
 
         private val smsMessageFunction: (ByteArray?, String?) -> SmsMessage? =
             if (isApiLevelAndUp(Build.VERSION_CODES.M)) {
@@ -65,12 +60,12 @@ class SmsListener : HiltBroadcastReceiver() {
                 }
             }
 
-        fun getVerificationCodeFromSmsText(smsText: String): String? {
-            val text = smsText.trim()
-            val keywordIndex = findKeywordIndex(text)
+        fun findVerificationCodeInText(text: String): String? {
+            val trimmedText = text.trim()
+            val keywordIndex = findKeywordIndex(trimmedText)
             if (keywordIndex == -1) return null
 
-            text.drop(keywordIndex + 1)
+            trimmedText.drop(keywordIndex + 1)
                 .split("\\s+".toRegex())
                 .forEach { word ->
                     if (word.isDigitsOnly()) {
